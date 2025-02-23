@@ -15,9 +15,27 @@ parser.add_argument(
 )
 
 parser.add_argument(
+    "-E",
+    type=str,
+    help="An eye string for the second cow",
+    dest="eyes_2",
+    default ='oo',
+    metavar="eye_string_2",
+)
+
+parser.add_argument(
     "-f", 
     type=str, 
     metavar="cowfile_1",
+    help="Either the name of a cow specified in the COWPATH, "
+         "or a path to a cowfile (if provided as a path, the path must "
+         "contain at least one path separator)",
+)
+
+parser.add_argument(
+    "-F",
+    type=str,
+    metavar="cowfile_2",
     help="Either the name of a cow specified in the COWPATH, "
          "or a path to a cowfile (if provided as a path, the path must "
          "contain at least one path separator)",
@@ -31,6 +49,11 @@ parser.add_argument(
 parser.add_argument(
     "-n", action="store_false",
     help="If given, text in the speech bubble of the first cow will not be wrapped"
+)
+
+parser.add_argument(
+    "-N", action="store_false",
+    help="If given, text in the speech bubble of the second cow will not be wrapped"
 )
 
 parser.add_argument(
@@ -71,6 +94,11 @@ parser.add_argument(
          "If not given, stdin is used instead."
 )
 
+parser.add_argument(
+    "message_2", default=None, nargs='?',
+    help="The message to include in the speech bubble. "
+         "If not given, stdin is used instead."
+)
 
 args = parser.parse_args()
 if args.l:
