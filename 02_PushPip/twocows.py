@@ -100,8 +100,31 @@ parser.add_argument(
          "If not given, stdin is used instead."
 )
 
+def get_preset(args):
+    return (
+            args.y or args.w or args.t or args.s
+            or args.p or args.g or args.d or args.b
+    )
+
 args = parser.parse_args()
 if args.l:
     print("\n".join(list_cows()))
 else:
-    print(cowsay(args.message_1, cow=args.f, wrap_text=args.n))
+    cow1 = cowsay(message=args.message_1, 
+                  cow=args.f, 
+                  preset=get_preset(args),
+                  eyes=args.eyes_1,
+                  tongue=args.tongue,
+                  width=args.width,
+                  wrap_text=args.n,
+                  )
+    cow2 = cowsay(message=args.message_2,
+                  cow=args.F, 
+                  preset=get_preset(args),
+                  eyes=args.eyes_2,
+                  tongue=args.tongue,
+                  width=args.width,
+                  wrap_text=args.N,
+                  )
+    print(cow1)
+    print(cow2)
