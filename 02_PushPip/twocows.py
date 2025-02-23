@@ -59,7 +59,7 @@ parser.add_argument(
 parser.add_argument(
     "-T", type=str, dest="tongue",
     help="A tongue string. This is ignored if a preset mode is given",
-    default=' ', metavar="tongue_string"
+    default='  ', metavar="tongue_string"
 )
 parser.add_argument(
     "-W", type=int, default=40, dest="width", metavar="column",
@@ -117,7 +117,7 @@ else:
                   tongue=args.tongue,
                   width=args.width,
                   wrap_text=args.n,
-                  )
+                  ).split('\n')
     cow2 = cowsay(message=args.message_2,
                   cow=args.F, 
                   preset=get_preset(args),
@@ -125,6 +125,12 @@ else:
                   tongue=args.tongue,
                   width=args.width,
                   wrap_text=args.N,
-                  )
-    print(cow1)
-    print(cow2)
+                  ).split('\n')
+    dif = abs(len(cow2) - len(cow1))
+    if len(cow1) > len(cow2):
+        cow2 = [''] * dif  + cow2
+    else:
+        cow1 = [''] * dif + cow1
+    max_len_1 = max([len(i) for i in cow1])
+    max_len_2 = max([len(i) for i in cow2])
+    print('\n'.join([f'{i[0]:<{max_len_1}}{i[1]:<{max_len_2}}' for i in zip(cow1, cow2)]))
