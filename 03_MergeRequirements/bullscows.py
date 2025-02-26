@@ -18,4 +18,13 @@ def bullscows(guess: str, riddle: str) -> (int, int):
     return bull, cows
 
 def gameplay(ask: callable, inform: callable, words: list[str]) -> int:
-    pass
+    riddle = random.choice(words)
+    cnt = 0
+    b = 0
+    while b != len(riddle):
+        cnt += 1
+        guess = ask("Введите слово: ", words)
+        b, c = bullscows(guess, riddle)
+        inform("Быки: {}, Коровы: {}", b, c)
+    return cnt
+
