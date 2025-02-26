@@ -34,3 +34,6 @@ def ask(prompt: str, valid: list[str] = None) -> str:
         while s not in valid:
             s = input(prompt)
     return s
+
+def inform(format_string: str, bulls: int, cows: int) -> None:
+    print(format_string.format(bulls, cows))
