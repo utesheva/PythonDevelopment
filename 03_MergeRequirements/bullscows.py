@@ -28,3 +28,9 @@ def gameplay(ask: callable, inform: callable, words: list[str]) -> int:
         inform("Быки: {}, Коровы: {}", b, c)
     return cnt
 
+def ask(prompt: str, valid: list[str] = None) -> str:
+    s = input(prompt)
+    if valid:
+        while s not in valid:
+            s = input(prompt)
+    return s
