@@ -2,6 +2,21 @@ import random
 import sys
 import cowsay
 import urllib.request
+from io import StringIO
+
+my_cow = cowsay.read_dot_cow(StringIO("""
+$the_cow = <<EOC;
+      $thoughts
+       $thoughts
+           )|_/(
+          { o o }
+          /  v  |
+         | |     |
+         | |  '' |
+         |/     /
+          /-w-w-
+EOC
+"""))
 
 def bullscows(guess: str, riddle: str) -> (int, int):
     bull = 0
@@ -27,11 +42,11 @@ def gameplay(ask: callable, inform: callable, words: list[str]) -> int:
     return cnt
 
 def ask(prompt: str, valid: list[str] = None) -> str:
-    print(cowsay.cowsay(prompt, cow=random.choice(cowsay.list_cows())))
+    print(cowsay.cowsay(prompt, cowfile=my_cow))
     s = input()
     if valid:
         while s not in valid:
-            print(cowsay.cowsay(prompt, cow=random.choice(cowsay.list_cows())))
+            print(cowsay.cowsay(prompt, cowfile=my_cow))
             s = input()
     return s
 
