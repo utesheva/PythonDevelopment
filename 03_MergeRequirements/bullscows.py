@@ -48,4 +48,5 @@ if __name__ == '__main__':
         words = open(sys.argv[1]).read().split('\n')
     if words[-1] == '':
         words = words[:-1]
+    words = [i for i in words if len(i) == l]
     print("Количество попыток:", gameplay(ask, inform, words)) 
