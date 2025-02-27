@@ -17,7 +17,6 @@ def bullscows(guess: str, riddle: str) -> (int, int):
 
 def gameplay(ask: callable, inform: callable, words: list[str]) -> int:
     riddle = random.choice(words)
-    print(riddle)
     cnt = 0
     b = 0
     while b != len(riddle):
