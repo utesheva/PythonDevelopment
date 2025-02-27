@@ -27,14 +27,16 @@ def gameplay(ask: callable, inform: callable, words: list[str]) -> int:
     return cnt
 
 def ask(prompt: str, valid: list[str] = None) -> str:
-    s = input(prompt)
+    print(cowsay.cowsay(prompt, cow=random.choice(cowsay.list_cows())))
+    s = input()
     if valid:
         while s not in valid:
-            s = input(prompt)
+            print(cowsay.cowsay(prompt, cow=random.choice(cowsay.list_cows())))
+            s = input()
     return s
 
 def inform(format_string: str, bulls: int, cows: int) -> None:
-    print(format_string.format(bulls, cows))
+    print(cowsay.cowsay(format_string.format(bulls, cows), cow=random.choice(cowsay.list_cows())))
 
 if __name__ == '__main__':
     if len(sys.argv) > 2:
