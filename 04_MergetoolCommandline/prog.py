@@ -63,6 +63,24 @@ class cmd_cow(cmd.Cmd):
                          for i in zip(cow1, cow2)]))
 
     def do_cowsay(self, args):
+        """
+        Usage: cowsay message [cow [param=value ...]] reply answer [cow [param=value ...]]
+        - message and answer are strings to be displayed
+        - user can add type of cow and parameters after message or answer
+        - name of parameters are from the list below
+
+        Prints two cows with their messages
+
+        :param cow: – the available cows can be found by calling list_cows
+        :param preset
+        :param eyes: eye string
+        :param tongue: tongue string
+        :param width: width
+        :param wrap_text: True or False
+        :param cowfile: a string containing the cow file text (chars are not
+        decoded as they are in read_dot_cow) if this parameter is provided the
+        cow parameter is ignored
+        """
         s = shlex.split(args)
         parameters_1 = self.parse_cows_arguments(s[:s.index("reply")])
         parameters_2 = self.parse_cows_arguments(s[s.index("reply") + 1:])
@@ -71,6 +89,25 @@ class cmd_cow(cmd.Cmd):
         self.draw_two_cows(cow1, cow2)
 
     def do_cowthink(self, args):
+        """
+        Same to cowsay
+        Usage: cowthink message [cow [param=value ...]] reply answer [cow [param=value ...]]
+        - message and answer are strings to be displayed
+        - user can add type of cow and parameters after message or answer
+        - name of parameters are from the list below
+
+        Prints two cows with their messages
+
+        :param cow: – the available cows can be found by calling list_cows
+        :param preset
+        :param eyes: eye string
+        :param tongue: tongue string
+        :param width: width
+        :param wrap_text: True or False
+        :param cowfile: a string containing the cow file text (chars are not
+        decoded as they are in read_dot_cow) if this parameter is provided the
+        cow parameter is ignored
+        """
         s = shlex.split(args)
         parameters_1 = self.parse_cows_arguments(s[:s.index("reply")])
         parameters_2 = self.parse_cows_arguments(s[s.index("reply") + 1:])
