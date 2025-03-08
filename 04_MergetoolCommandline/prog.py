@@ -40,11 +40,23 @@ class cmd_cow(cmd.Cmd):
                 k += 1
         return arguments
 
-   
+    def cow_from_parameters(self, command, parameters):
+        cow = command(message = parameters['message'],
+                              cow = parameters['cow'],
+                              preset = parameters['preset'],
+                              eyes = parameters['eyes'],
+                              tongue = parameters['tongue'],
+                              width = parameters['width'],
+                              wrap_text = parameters['wrap_text'],
+                              cowfile = parameters['cowfile'])
+        return cow.split('\n')   
+    
     def do_cowsay(self, args):
         s = shlex.split(args)
         parameters_1 = self.parse_cows_arguments(s[:s.index("reply")])
         parameters_2 = self.parse_cows_arguments(s[s.index("reply") + 1:])
+        cow1 = self.cow_from_parameters(cowsay.cowsay, parameters_1)
+        cow2 = self.cow_from_parameters(cowsay.cowsay, parameters_2)
 
 
     def dow_cowthink(self, args):
