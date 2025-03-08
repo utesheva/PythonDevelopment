@@ -51,12 +51,25 @@ class cmd_cow(cmd.Cmd):
                               cowfile = parameters['cowfile'])
         return cow.split('\n')   
     
+    def draw_two_cows(self, cow1, cow2):
+        dif = abs(len(cow2) - len(cow1))
+        if len(cow1) > len(cow2):
+            cow2 = [''] * dif  + cow2
+        else:
+            cow1 = [''] * dif + cow1
+        max_len_1 = max([len(i) for i in cow1])
+        max_len_2 = max([len(i) for i in cow2])
+        print('\n'.join([f'{i[0]:<{max_len_1}}{i[1]:<{max_len_2}}'
+                         for i in zip(cow1, cow2)]))
+
     def do_cowsay(self, args):
         s = shlex.split(args)
         parameters_1 = self.parse_cows_arguments(s[:s.index("reply")])
         parameters_2 = self.parse_cows_arguments(s[s.index("reply") + 1:])
         cow1 = self.cow_from_parameters(cowsay.cowsay, parameters_1)
         cow2 = self.cow_from_parameters(cowsay.cowsay, parameters_2)
+        self.draw_two_cows(cow1, cow2)
+
 
 
     def dow_cowthink(self, args):
