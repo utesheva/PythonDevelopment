@@ -70,10 +70,14 @@ class cmd_cow(cmd.Cmd):
         cow2 = self.cow_from_parameters(cowsay.cowsay, parameters_2)
         self.draw_two_cows(cow1, cow2)
 
+    def do_cowthink(self, args):
+        s = shlex.split(args)
+        parameters_1 = self.parse_cows_arguments(s[:s.index("reply")])
+        parameters_2 = self.parse_cows_arguments(s[s.index("reply") + 1:])
+        cow1 = self.cow_from_parameters(cowsay.cowthink, parameters_1)
+        cow2 = self.cow_from_parameters(cowsay.cowthink, parameters_2)
+        self.draw_two_cows(cow1, cow2)
 
-
-    def dow_cowthink(self, args):
-        pass
 
 if __name__ == '__main__':
     cmd_cow().cmdloop() 
