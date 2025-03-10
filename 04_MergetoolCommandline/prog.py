@@ -32,9 +32,13 @@ class cmd_cow(cmd.Cmd):
                      'wrap_text': True,
                      'cowfile': None}
         k = 1
+        print(parameters)
         for i in parameters[1:]:
             if '=' in i:
-                arguments[i.split('=')[0]] = type(arguments[i.split('=')[0]])(i.split('=')[1])
+                if arguments[i.split('=')[0]]:
+                    arguments[i.split('=')[0]] = type(arguments[i.split('=')[0]])(i.split('=')[1])
+                else:
+                    arguments[i.split('=')[0]] = i.split('=')[1]
             else:
                 arguments[list(arguments.keys())[k]] = i
                 k += 1
@@ -72,11 +76,11 @@ class cmd_cow(cmd.Cmd):
         Prints two cows with their messages
 
         :param cow: – the available cows can be found by calling list_cows
-        :param preset
+        :param preset: [bdgpstwy]
         :param eyes: eye string
         :param tongue: tongue string
         :param width: width
-        :param wrap_text: True or False
+        :param wrap_text: 1 or 0
         :param cowfile: a string containing the cow file text (chars are not
         decoded as they are in read_dot_cow) if this parameter is provided the
         cow parameter is ignored
@@ -99,11 +103,11 @@ class cmd_cow(cmd.Cmd):
         Prints two cows with their messages
 
         :param cow: – the available cows can be found by calling list_cows
-        :param preset
+        :param preset: -[bdgpstwy]
         :param eyes: eye string
         :param tongue: tongue string
         :param width: width
-        :param wrap_text: True or False
+        :param wrap_text: 1 or 0 
         :param cowfile: a string containing the cow file text (chars are not
         decoded as they are in read_dot_cow) if this parameter is provided the
         cow parameter is ignored
@@ -114,6 +118,30 @@ class cmd_cow(cmd.Cmd):
         cow1 = self.cow_from_parameters(cowsay.cowthink, parameters_1)
         cow2 = self.cow_from_parameters(cowsay.cowthink, parameters_2)
         self.draw_two_cows(cow1, cow2)
+
+    def do_EOF(self, args):
+        return 1
+
+    def compl(self, text, line, begidx, endidx):
+        words = (line[:endidx] +'.').split()
+        if len(words) <= 2 or words[-2] == 'reply':
+            return ['message']
+        match words[-1]:
+            case i if 'cow=' in i or 'cow=.' in i:
+                DICT = cowsay.list_cows()
+            case i if 'preset=' in i or 'preset=.' in i:
+                DICT = ['b', 'd', 'g', 'p', 's', 't', 'w', 'y']
+            case i if 'wrap_text=' in i or 'wrap_text=.' in i:
+                DICT = ['0', '1']
+            case _:
+                DICT = ['cow=', 'preset=', 'eyes=', 'tongue=', 'width=', 'wrap_text=', 'cowfile=', 'reply']
+        return [c for c in DICT if c.startswith(text)]
+
+    def complete_cowthink(self, text, line, begidx, endidx):
+        return self.compl(text, line, begidx, endidx)
+
+    def complete_cowsay(self, text, line, begidx, endidx):
+        return self.compl(text, line, begidx, endidx)
 
 
 if __name__ == '__main__':
