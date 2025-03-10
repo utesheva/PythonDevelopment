@@ -32,13 +32,15 @@ class cmd_cow(cmd.Cmd):
                      'wrap_text': True,
                      'cowfile': None}
         k = 1
-        print(parameters)
         for i in parameters[1:]:
             if '=' in i:
-                if arguments[i.split('=')[0]]:
-                    arguments[i.split('=')[0]] = type(arguments[i.split('=')[0]])(i.split('=')[1])
+                name, val = i.split('=')
+                if name == 'wrap_text':
+                    arguments[name] = bool(int(val))
+                elif arguments[name] and name != 'preset':
+                    arguments[name] = type(arguments[name])(val)
                 else:
-                    arguments[i.split('=')[0]] = i.split('=')[1]
+                    arguments[name] = val
             else:
                 arguments[list(arguments.keys())[k]] = i
                 k += 1
@@ -96,7 +98,7 @@ class cmd_cow(cmd.Cmd):
     def do_cowthink(self, args):
         """
         Same to cowsay
-        Usage: cowsay message [cow preset eyes ...][param=value ...] reply answer [cow preset eyes ...][param=value ...]
+        Usage: cowthink message [cow preset eyes ...][param=value ...] reply answer [cow preset eyes ...][param=value ...]
         - message and answer are strings to be displayed
         - user can add type of cow and parameters after message or answer
         - name of parameters are from the list below
