@@ -68,10 +68,11 @@ class cmd_cow(cmd.Cmd):
 
     def do_cowsay(self, args):
         """
-        Usage: cowsay message [cow [param=value ...]] reply answer [cow [param=value ...]]
+        Usage: cowsay message [cow preset eyes ...][param=value ...] reply answer [cow preset eyes ...][param=value ...]
         - message and answer are strings to be displayed
         - user can add type of cow and parameters after message or answer
         - name of parameters are from the list below
+        - you can use arguments in the given order or with name in any order
 
         Prints two cows with their messages
 
@@ -95,15 +96,15 @@ class cmd_cow(cmd.Cmd):
     def do_cowthink(self, args):
         """
         Same to cowsay
-        Usage: cowthink message [cow [param=value ...]] reply answer [cow [param=value ...]]
+        Usage: cowsay message [cow preset eyes ...][param=value ...] reply answer [cow preset eyes ...][param=value ...]
         - message and answer are strings to be displayed
         - user can add type of cow and parameters after message or answer
         - name of parameters are from the list below
-
+        - you can use arguments in the given order or with name in any order
         Prints two cows with their messages
 
         :param cow: – the available cows can be found by calling list_cows
-        :param preset: -[bdgpstwy]
+        :param preset: [bdgpstwy]
         :param eyes: eye string
         :param tongue: tongue string
         :param width: width
