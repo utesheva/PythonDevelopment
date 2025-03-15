@@ -29,6 +29,12 @@ async def print_list(l, exception, writer):
         writer.write(f"{exception}\n".encode())
         await writer.drain()
 
+async def send_message(sender, receivers, text):
+    message = cowsay.cowsay(text, cow=sender)
+    for out in clients.values():
+        if out.cow in receivers:
+            await out.queue.put(f"{message}")
+
 async def chat(reader, writer):
     global clients
     me = "{}:{}".format(*writer.get_extra_info('peername'))
@@ -54,10 +60,12 @@ async def chat(reader, writer):
                     case (['say', *args] | ['yield', args]) if clients[me].cow is None:
                         writer.write("Login to send and receive messages.\n".encode())
                         await writer.drain()
-                    case ['say', cow, *args]:
-                        pass
+                    case ['say', name, *args]:
+                        await send_message(clients[me].cow, [name], ' '.join(args))
                     case ['yield', *args]:
-                        pass
+                        await send_message(clients[me].cow, 
+                                           [i.cow for i in clients.values() if i != clients[me]], 
+                                           ' '.join(args))
                     case ['quit']:
                         state = False
                         break
