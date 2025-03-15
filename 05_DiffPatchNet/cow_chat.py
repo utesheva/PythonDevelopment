@@ -1,4 +1,5 @@
 import asyncio
+import cowsay
 
 class Client:
     def __init__(self):
@@ -7,7 +8,21 @@ class Client:
 
 clients = {}
 
+def who(clients):
+    return [clients[i].cow for i in clients if clients[i].cow is not None]
+
+def cows(clients):
+    used = who(clients)
+    return [i for i in cowsay.list_cows() if i not in used]
+
+def login(clients, me, cow):
+    if cow in cows(clients):
+        clients[me].cow = cow
+        return clients, 'Successful login'
+    return clients, 'This cow cannot be used. Call cows to see free names.'
+
 async def chat(reader, writer):
+    global clients
     me = "{}:{}".format(*writer.get_extra_info('peername'))
     print(me)
     clients[me] = Client()
@@ -22,15 +37,37 @@ async def chat(reader, writer):
                     if out.queue is not clients[me].queue:
                         await out.queue.put(f"{me} {q.result().decode().strip()}")
             elif q is receive and clients[me].cow is not None:
-                receive = asyncio.create_task(clients[me].get())
+                receive = asyncio.create_task(clients[me].queue.get())
                 writer.write(f"{q.result()}\n".encode())
                 await writer.drain()
             elif q is receive:
-                receive = asyncio.create_task(clients[me].get())
+                receive = asyncio.create_task(clients[me].queue.get())
             elif q is send:
-                writer.write("Login first\n".encode())
-                await writer.drain()
                 send = asyncio.create_task(reader.readline())
+                match q.result().decode().split():
+                    case ['who']:
+                        names = who(clients)
+                        if names != []:
+                            writer.write(f"{'\n'.join(names)}\n".encode())
+                            await writer.drain()
+                        else:
+                            writer.write("No users yet\n".encode())
+                            await writer.drain()
+                    case ['cows']:
+                        names = cows(clients)
+                        if names != []:
+                            writer.write(f"{'\n'.join(cows(clients))}\n".encode())
+                            await writer.drain()
+                        else:
+                            writer.write("No free names\n".encode())
+                            await writer.drain()
+                    case ['login', name]:
+                        clients, ans = login(clients, me, name)
+                        writer.write(f"{ans}\n".encode())
+                        await writer.drain()
+                    case _:
+                        writer.write("Login first\n".encode())
+                        await writer.drain()
     send.cancel()
     receive.cancel()
     print(me, "DONE")
