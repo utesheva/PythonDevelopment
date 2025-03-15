@@ -21,6 +21,14 @@ def login(clients, me, cow):
         return clients, 'Successful login'
     return clients, 'This cow cannot be used. Call cows to see free names.'
 
+async def print_list(l, exception, writer):
+    if l != []:
+        writer.write(f"{'\n'.join(l)}\n".encode())
+        await writer.drain()
+    else:
+        writer.write(f"{exception}\n".encode())
+        await writer.drain()
+
 async def chat(reader, writer):
     global clients
     me = "{}:{}".format(*writer.get_extra_info('peername'))
@@ -46,21 +54,9 @@ async def chat(reader, writer):
                 send = asyncio.create_task(reader.readline())
                 match q.result().decode().split():
                     case ['who']:
-                        names = who(clients)
-                        if names != []:
-                            writer.write(f"{'\n'.join(names)}\n".encode())
-                            await writer.drain()
-                        else:
-                            writer.write("No users yet\n".encode())
-                            await writer.drain()
+                        await print_list(who(clients), "No users yet", writer)
                     case ['cows']:
-                        names = cows(clients)
-                        if names != []:
-                            writer.write(f"{'\n'.join(cows(clients))}\n".encode())
-                            await writer.drain()
-                        else:
-                            writer.write("No free names\n".encode())
-                            await writer.drain()
+                        await print_list(cows(clients), "No free names", writer)
                     case ['login', name]:
                         clients, ans = login(clients, me, name)
                         writer.write(f"{ans}\n".encode())
