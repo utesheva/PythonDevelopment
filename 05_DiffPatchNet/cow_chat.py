@@ -36,21 +36,11 @@ async def chat(reader, writer):
     clients[me] = Client()
     send = asyncio.create_task(reader.readline())
     receive = asyncio.create_task(clients[me].queue.get())
+    state = True
     while not reader.at_eof():
         done, pending = await asyncio.wait([send, receive], return_when=asyncio.FIRST_COMPLETED)
         for q in done:  
-            if q is send and clients[me].cow is not None:
-                send = asyncio.create_task(reader.readline())
-                for out in clients.values():
-                    if out.queue is not clients[me].queue:
-                        await out.queue.put(f"{me} {q.result().decode().strip()}")
-            elif q is receive and clients[me].cow is not None:
-                receive = asyncio.create_task(clients[me].queue.get())
-                writer.write(f"{q.result()}\n".encode())
-                await writer.drain()
-            elif q is receive:
-                receive = asyncio.create_task(clients[me].queue.get())
-            elif q is send:
+            if q is send:
                 send = asyncio.create_task(reader.readline())
                 match q.result().decode().split():
                     case ['who']:
@@ -61,9 +51,25 @@ async def chat(reader, writer):
                         clients, ans = login(clients, me, name)
                         writer.write(f"{ans}\n".encode())
                         await writer.drain()
-                    case _:
-                        writer.write("Login first\n".encode())
+                    case (['say', *args] | ['yield', args]) if clients[me].cow is None:
+                        writer.write("Login to send and receive messages.\n".encode())
                         await writer.drain()
+                    case ['say', cow, *args]:
+                        pass
+                    case ['yield', *args]:
+                        pass
+                    case ['quit']:
+                        state = False
+                        break
+                    case _:
+                        writer.write("Invalid command.\n".encode())
+                        await writer.drain()
+            elif q is receive:
+                receive = asyncio.create_task(clients[me].queue.get())
+                if clients[me].cow is not None: 
+                    writer.write(f"{q.result()}\n".encode())
+                    await writer.drain()
+        if not state: break
     send.cancel()
     receive.cancel()
     print(me, "DONE")
