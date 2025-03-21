@@ -23,17 +23,16 @@ def login(clients, me, cow):
 
 async def print_list(l, exception, writer):
     if l != []:
-        writer.write(f"{'\n'.join(l)}\n".encode())
+        writer.write(f"0 {' '.join(l)}\n".encode())
         await writer.drain()
     else:
-        writer.write(f"{exception}\n".encode())
+        writer.write(f"0 {exception}\n".encode())
         await writer.drain()
 
 async def send_message(sender, receivers, text):
-    message = cowsay.cowsay(text, cow=sender)
     for out in clients.values():
         if out.cow in receivers:
-            await out.queue.put(f"{message}")
+            await out.queue.put(f"1 {sender} {text}")
 
 async def chat(reader, writer):
     global clients
@@ -55,10 +54,10 @@ async def chat(reader, writer):
                         await print_list(cows(clients), "No free names", writer)
                     case ['login', name]:
                         clients, ans = login(clients, me, name)
-                        writer.write(f"{ans}\n".encode())
+                        writer.write(f"0 {ans}\n".encode())
                         await writer.drain()
                     case (['say', *args] | ['yield', args]) if clients[me].cow is None:
-                        writer.write("Login to send and receive messages.\n".encode())
+                        writer.write("0 Login to send and receive messages.\n".encode())
                         await writer.drain()
                     case ['say', name, *args]:
                         await send_message(clients[me].cow, [name], ' '.join(args))
@@ -70,7 +69,7 @@ async def chat(reader, writer):
                         state = False
                         break
                     case _:
-                        writer.write("Invalid command.\n".encode())
+                        writer.write("0 Invalid command.\n".encode())
                         await writer.drain()
             elif q is receive:
                 receive = asyncio.create_task(clients[me].queue.get())
